@@ -1,0 +1,5 @@
+rect(障害物)　player(プレイやー)
+障害物に当たったら
+if (rect.intersects(player)) {
+	//処理
+}
