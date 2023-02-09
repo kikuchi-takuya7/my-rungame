@@ -20,7 +20,7 @@ void DrawBack(Texture _background, double _move, double _move2, double _move3);
 
 //ほとんどすべての表示
 void DrawAll(double _move, double _move2, double _move3, int _die, double _limit, Font _font, String _gameclears, String _gameovers,
-				RectF _scaffold, RectF _edge, Circle _player, Texture _explosion);
+				RectF _scaffold, RectF _edge, Circle _player, Texture _explosion, String _restart);
 
 //オブジェの上に乗ったときに重力などをなくす関数
 void Reset(double& _velocity, double& _gravity, int& _jummptmp, int& _jumpcount);
@@ -59,14 +59,15 @@ void Main()
 	const Texture mob{ U"example/mob.png" };
 	const Texture skymob{ U"example/skymob.png" };
 	const Texture backtitle{ U"example/title.jpg" };
-	const Font minifont{ 40 };
-	const Font font{ 80 };
-	const Font bigfont{ 120 };
+	const Font minifont{ FontMethod::SDF, 40 };
+	const Font font{ FontMethod::SDF, 80 };
+	const Font bigfont{ FontMethod::SDF, 120 };
+	const String restart = U"RESTART:SPEAS";
 	const String gameclears = U"GAME CLEAR";
 	const String gameovers = U"GAME OVER";
 	const String Up = U"SPEAD UP!";
 	const String title = U"Escape\n  Run";
-	const String please = U"Please Enter";
+	const String please = U"Please Speas";
 	//最初の足場
 	RectF scaffold{ 0, 500, 800, 10 };
 	//画面恥の表示
@@ -139,7 +140,7 @@ void Main()
 			break;
 		}
 		
-		DrawAll(move, move2, move3, die, limit, font, gameclears, gameovers, scaffold, edge, player, explosion);
+		DrawAll(move, move2, move3, die, limit, font, gameclears, gameovers, scaffold, edge, player, explosion, restart);
 
 		if (die != 0 && KeySpace.down()) {
 			InitAll(move, move2, move3, score, die, tMove, limit,limitcount, velocity, gravity, pattern, period, jumpcount, jumptmp, speadtmp);
@@ -180,11 +181,12 @@ void Title(Font _font, String _title, String _please, Texture _backtitle)
 	while (System::Update())
 	{
 
-		_font(_title).draw(120, 200, 50);
+		_backtitle.scaled(1.7).draw(0, 0);
 
-		_font(_please).draw(270, 500);
+		_font(_title).draw(TextStyle::Outline(0.2, { Palette::Red }), 120, 200, 50);
 
-		_backtitle.draw(0, 0);
+		_font(_please).draw(TextStyle::Outline(0.2, { Palette::Red }), 270, 500);
+		
 
 		if (KeySpace.down())
 			break;
@@ -293,11 +295,11 @@ void DrawBack(Texture _background, double _move, double _move2, double _move3){
 }
 
 void DrawAll(double _move, double _move2, double _move3, int _die, double _limit, Font _font, String gameclears, String gameovers,
-				RectF _scaffold, RectF _edge, Circle _player, Texture _explosion){
+				RectF _scaffold, RectF _edge, Circle _player, Texture _explosion, String _restart){
 
 	//30秒経過したらクリア
 	if (_limit <= 0) {
-		_font(gameclears).draw(20, 200);
+		_font(gameclears).draw(TextStyle::Outline(0.2, { Palette::Red }), 20, 200);
 	}
 
 	//足場
@@ -317,12 +319,13 @@ void DrawAll(double _move, double _move2, double _move3, int _die, double _limit
 	}
 	else if (_die >= 120 && _die <= 300) {
 
-		_explosion.draw(playerPos.x - 400, playerPos.y - 300, ColorF{ 1.0, Periodic::Sine0_1(6s) });
+		_explosion.draw(playerPos.x - 400, playerPos.y - 300, ColorF{ 1.0, Periodic::Sine0_1(4s) });
 	}
 	//ゲームオーバー表示
 	if (_die > 1)
 	{
-		_font(gameovers).draw(20, 200);
+		_font(gameovers).draw(TextStyle::Outline(0.2, { Palette::Red }), 20, 200);
+		_font(_restart).draw(TextStyle::Outline(0.2, { Palette::Red }), 50, 200, 500);
 	}
 }
 
@@ -402,7 +405,7 @@ void Pattern0(double _move2, double _move3, double _bottomO, double _bottomE, do
 
 	Triangle enemyS2{ _move2 + 300, _bottomE - 200, _scaleE };
 	_skymob.scaled(0.2).drawAt(_move2 + 300, _bottomE - 200);
-
+	
 	Triangle enemy3{ _move2 + 500, _bottomE, _scaleE };
 	_mob.scaled(0.3).drawAt(_move2 + 500, _bottomE);
 
@@ -594,14 +597,14 @@ void Pattern2(double _move2, double _move3, double _bottomO, double _bottomE, do
 
 	//当たり判定
 	//敵に当たったら、画面が止まる
-	/*CollisionE(_die, _player, enemyS);
+	CollisionE(_die, _player, enemyS);
 	CollisionE(_die, _player, enemyS2);
 	CollisionE(_die, _player, enemy3);
 	CollisionE(_die, _player, enemy4);
 	CollisionE(_die, _player, enemy5);
 	CollisionE(_die, _player, enemy6);
 	CollisionE(_die, _player, enemy7);
-	CollisionE(_die, _player, enemy8);*/
+	CollisionE(_die, _player, enemy8);
 
 	/*オブジェクトに当たったら、押し戻される*/
 	CollisionO(_tMove, _velocity, _gravity, _jumptmp, _jumpcount, _player, object, objectsub);
