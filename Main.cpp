@@ -260,8 +260,8 @@ void UpdateAll(int &_period, double &_tMove,double &_move, double &_move2, doubl
 
 	//ジャンプ
 	if (KeySpace.down() && _jumpcount <= 1 && _die == 0) {
-		_velocity = 8.0f; //ジャンプの初速
-		_gravity = 2.0f; //重力 
+		_velocity = 10.0f; //ジャンプの初速
+		_gravity = 1.0f; //重力 
 		_jumpcount += 1;
 		_jumptmp = 1;
 	}
@@ -269,7 +269,7 @@ void UpdateAll(int &_period, double &_tMove,double &_move, double &_move2, doubl
 	if (_jumptmp == 1) {
 		playerPos.y -= _velocity;
 		playerPos.y += _gravity;
-		_gravity += 0.1f;
+		_gravity += 0.25f;
 	}
 
 	//急降下
