@@ -29,14 +29,14 @@ void Reset(double& _velocity, double& _gravity, int& _jummptmp, int& _jumpcount)
 void CollisionO(double _tMove, double &_velocity, double &_gravity, int &_jumptmp, int &_jumpcount,
 				Circle _player, RectF _object, RectF objectsub);
 
-//空中に浮いてる正方形オブジェの当たり判定。下からあたったときの挙動が少し磁石みたいだけど、修正する時間がないし特に問題なさそうだからいいや
+//空中に浮いてる正方形オブジェの当たり判定。下からあたったときの挙動が少し磁石みたいになってしまっているが、修正する時間がない
 void CollisionOSky(double _tMove, double& _velocity, double& _gravity, int& _jumptmp, int& _jumpcount,
 				Circle _player, RectF _object, RectF objectsub/*, RectF objectunder*/);
 
 //敵の当たり判定
 void CollisionE(int &_die, Circle _player, Triangle _enemy);
 
-//敵が出てくるパターん
+//敵が出てくるパターン
 void Pattern0(double _move2, double _move3, double _bottomO, double _bottomE, double _scaleE, Circle _player, int &_die,
 				double _tMove, Texture _mob, Texture _skymob, double &_velocity, double &_gravity, int &_jumptmp, int &_jumpcount);
 
@@ -54,6 +54,7 @@ void Pattern2Draw(Texture _mob, double _move2, double _move3, double _bottomE, R
 
 void Main()
 {
+	//テキスト一覧
 	const Texture background{ U"example/sky002_day.jpg" };
 	const Texture explosion{ U"example/explosion.png" };
 	const Texture mob{ U"example/mob.png" };
@@ -62,15 +63,15 @@ void Main()
 	const Font minifont{ FontMethod::SDF, 40 };
 	const Font font{ FontMethod::SDF, 80 };
 	const Font bigfont{ FontMethod::SDF, 120 };
-	const String restart = U"RESTART:SPEAS";
+	const String restart = U"RESTART:SPACE";
 	const String gameclears = U"GAME CLEAR";
 	const String gameovers = U"GAME OVER";
 	const String Up = U"SPEAD UP!";
 	const String title = U"Escape\n  Run";
-	const String please = U"Please Speas";
+	const String please = U"Please Space";
 	//最初の足場
 	RectF scaffold{ 0, 500, 800, 10 };
-	//画面恥の表示
+	//画面端の表示
 	RectF edge{ 0, 0, 5, 800 };
 	double move;//背景やオブジェクトの移動すべての移動速度
 	double move2;//
@@ -90,15 +91,18 @@ void Main()
 	int jumpcount;//ジャンプ回数
 	int jumptmp;//1ならジャンプの処理が続いて0なら処理しない・時間があれば関数にしたい
 	int speadtmp;//スピードアップを表示させるためのやつ
-	
+
+	//初期化
 	InitAll(move, move2, move3, score, die, tMove,limit, limitcount , velocity, gravity, pattern, period, jumpcount, jumptmp, speadtmp);
 
+	//タイトルの表示
 	Title(minifont, title, please, backtitle);
 
 	while (System::Update())
 	{
 		ClearPrint();
 
+		//背景の表示
 		DrawBack(background, move, move2, move3);
 
 		UpdateAll(period, tMove, move, move2, move3, limit,limitcount, score, die, velocity, gravity, jumptmp, jumpcount, font, Up, speadtmp);
@@ -106,10 +110,7 @@ void Main()
 		//プレイヤーの宣言
 		Circle player{ playerPos.x, playerPos.y, 20 };
 
-		//敵の表示
-		//Vec2 player3{ player.x, player.y };  ←こいつのせいだった。確かにこれだと座標の真ん中にしか判定が出来なくなる。スッキリ
-
-		//randでいくつかのパターンの中からランダムで選ばれるようにしたかった
+		//randでいくつかのパターンの中からランダムで選ばれるようにした
 		switch (pattern[period])
 		{
 		case 0:
@@ -169,6 +170,7 @@ void InitAll(double &_move, double &_move2, double &_move3, int &_score, int &_d
 	_jumptmp = 0;
 	_speadtmp = 0;
 
+	//リスタートされるたびパターンが変わる
 	srand(time(NULL));
 
 	for (int i = 0; i < NUM; i++) {
@@ -198,6 +200,7 @@ void Title(Font _font, String _title, String _please, Texture _backtitle)
 void UpdateAll(int &_period, double &_tMove,double &_move, double &_move2, double &_move3,double &_limit, double &_limitcount, int &_score,/*, double _bottomO, double _bottomE, double _scaleE, Vec2 _player*/
 				int &_die, double &_velocity, double &_gravity, int &_jumptmp, int &_jumpcount, Font _font, String _Up, int &_speadtmp){
 
+	//スピードアップ
 	if (_period == 0) {
 		_tMove = (Scene::DeltaTime() * 180);
 	}
@@ -279,7 +282,7 @@ void UpdateAll(int &_period, double &_tMove,double &_move, double &_move2, doubl
 		Reset(_velocity, _gravity, _jumptmp, _jumpcount);
 	}
 
-	//押し戻されて画面恥に言ったら画面が止まる
+	//押し戻されて画面端に言ったら画面が止まる
 	if (playerPos.x <= 20) {
 		_die += 1;
 	}
